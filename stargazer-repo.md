@@ -40,7 +40,7 @@ http:POST:/bindings:
 http:POST:/stargazer-modal/submit:
   - StargazerModalFormHTTP
 http:POST:/stargazer-add-repo/submit:
-  - StargazerAddHTTP
+  - WatchHTTP
 http:POST:/list/submit:
   - ListHTTP
 http:POST:/unwatch/lookup:
@@ -55,7 +55,7 @@ http:POST:/watch/submit:
 
 ## cron StarChecker
 ```yaml
-schedule: "*/10 * * * * *"
+schedule: "0 0 * * * *"
 function: CheckStars
 ```
 
@@ -108,14 +108,14 @@ function handle(event) {
     events.respond(event, {
         status: 200,
         body: {
-            "app_id": "stargazer-repo",
-            "display_name": "Stargazer app",
-            "app_type": "http",
-            "root_url": "http://localhost:8222/stargazer-repo",
-            "requested_permissions": [
+            app_id: "stargazer-repo",
+            display_name: "Stargazer app",
+            app_type: "http",
+            root_url: "http://localhost:8222/stargazer-repo",
+            requested_permissions: [
                 "act_as_bot"
             ],
-            "requested_locations": [
+            requested_locations: [
                 "/channel_header",
                 "/command"
             ]
@@ -133,72 +133,72 @@ async function handle(event) {
     events.respond(event, {
         status: 200,
         body: {
-            "type": "ok",
-            "data": [
+            type: "ok",
+            data: [
                 {
-                    "location": "/channel_header",
-                    "bindings": [
+                    location: "/channel_header",
+                    bindings: [
                         {
-                            "location": "send-button",
-                            "icon": "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
-                            "label": "Watch the stars for a new repo",
-                            "call": {
-                                "path": "/stargazer-modal"
+                            location: "send-button",
+                            icon: "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
+                            label: "Watch the stars for a new repo",
+                            call: {
+                                path: "/stargazer-modal"
                             }
                         }
                     ]
                 },
                 {
-                    "location": "/command",
-                    "bindings": [
+                    location: "/command",
+                    bindings: [
                         {
-                            "icon": "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
-                            "label": "stargazer",
-                            "description": "Github star checker",
-                            "bindings": [
+                            icon: "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
+                            label: "stargazer",
+                            description: "Github star checker",
+                            bindings: [
                                 {
-                                    "location": "list",
-                                    "label": "list",
+                                    location: "list",
+                                    label: "list",
                                     form: {
-                                        "fields": [],
-                                        "call": {
-                                            "path": "/list"
+                                        fields: [],
+                                        call: {
+                                            path: "/list"
                                         }
                                     }
                                 },
                                 {
-                                    "location": "watch",
-                                    "label": "watch",
+                                    location: "watch",
+                                    label: "watch",
                                     form: {
-                                        "title": "Watch a repo",
-                                        "icon": "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
-                                        "fields": [
+                                        title: "Watch a repo",
+                                        icon: "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
+                                        fields: [
                                             {
                                                 name: "repo",
                                                 label: "repo",
                                                 type: "text",
                                             }
                                         ],
-                                        "call": {
-                                            "path": "/watch"
+                                        call: {
+                                            path: "/watch"
                                         }
                                     }
                                 },
                                 {
-                                    "location": "unwatch",
-                                    "label": "unwatch",
+                                    location: "unwatch",
+                                    label: "unwatch",
                                     form: {
-                                        "title": "Stop watching a repository",
-                                        "icon": "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
-                                        "fields": [
+                                        title: "Stop watching a repository",
+                                        icon: "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
+                                        fields: [
                                             {
                                                 name: "repo",
                                                 label: "repo",
                                                 type: "dynamic_select",
                                             }
                                         ],
-                                        "call": {
-                                            "path": "/unwatch"
+                                        call: {
+                                            path: "/unwatch"
                                         }
                                     }
                                 }
@@ -247,19 +247,19 @@ function handle(event) {
     events.respond(event, {
         status: 200,
         body: {
-            "type": "form",
-            "form": {
-                "title": "Watch a new repository",
-                "icon": "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
-                "fields": [
+            type: "form",
+            form: {
+                title: "Watch a new repository",
+                icon: "https://github.blog/wp-content/uploads/2020/09/github-stars-logo_Color.png",
+                fields: [
                     {
-                        "type": "text",
-                        "name": "repo",
-                        "label": "Github repo"
+                        type: "text",
+                        name: "repo",
+                        label: "Github repo"
                     }
                 ],
-                "call": {
-                    "path": "/stargazer-add-repo"
+                call: {
+                    path: "/stargazer-add-repo"
                 }
             }
         }
@@ -267,7 +267,7 @@ function handle(event) {
 }
 ```
 
-## function StargazerAddHTTP
+## function WatchHTTP
 
 ```javascript
 import {events, store} from "./matterless.ts";
@@ -286,13 +286,15 @@ async function handle(event) {
 }
 ```
 
-# function ListHTTP
+# Slash command implementation
 
+## Listing
+
+### function ListHTTP
 ```javascript
 import {events, store} from "./matterless.ts";
 
 async function handle(event) {
-    console.log("Hello", event.json_body)
     let channelId = event.json_body.context.channel_id;
 
     events.respond(event, {
@@ -308,9 +310,10 @@ async function handle(event) {
 }
 ```
 
-# Unwatch functionality
+## Unwatch
 
-## function UnwatchLookupHTTP
+### function UnwatchLookupHTTP
+For autocompletion of the `unwatch` command.
 
 ```javascript
 import {events, store} from "./matterless.ts";
@@ -323,11 +326,11 @@ async function handle(event) {
         body: {
             type: "ok",
             data: {
-                "items": (await store.queryPrefix(`watch:${channelId}:`)).map(([key, val]) => {
+                items: (await store.queryPrefix(`watch:${channelId}:`)).map(([key, val]) => {
                     const [_, channelId, repo] = key.split(':');
                     return {
-                        "label": repo,
-                        "value": repo,
+                        label: repo,
+                        value: repo
                     };
                 })
             }
@@ -336,7 +339,9 @@ async function handle(event) {
 }
 ```
 
-## function UnwatchHTTP
+### function UnwatchHTTP
+The actual unwatch logic.
+
 ```javascript
 import {events, store} from "./matterless.ts";
 
