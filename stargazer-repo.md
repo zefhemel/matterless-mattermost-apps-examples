@@ -1,5 +1,8 @@
 # Mattermost Star Gazer App 🌟
 
+[Demo video](https://cln.sh/0KPiSc)
+
+
 # To run
 ```bash
 $ mls run stargazer-repo.md
