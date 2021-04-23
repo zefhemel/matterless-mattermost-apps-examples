@@ -218,16 +218,14 @@ async function handle(event) {
 ```javascript
 import {events, store} from "./matterless.ts";
 
-async function storeTokens(ctx) {
+async function handle(event) {
+    console.log("Just got an install", event);
+    let ctx = event.json_body.context;
     await store.put("bot:token", ctx.bot_access_token);
     await store.put("bot:user_id", ctx.bot_user_id);
     await store.put("mattermost:url", ctx.mattermost_site_url)
     await store.put("mattermost:team_id", ctx.team_id)
-}
-
-async function handle(event) {
-    console.log("Just got an install", event);
-    await storeTokens(event.json_body.context);
+    
     events.respond(event, {
         status: 200,
         body: "OK"
