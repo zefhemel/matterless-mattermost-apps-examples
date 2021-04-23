@@ -127,7 +127,7 @@ function handle(event) {
 ## function BindingsHTTP
 
 ```javascript
-import {events, store} from "./matterless.ts";
+import {events} from "./matterless.ts";
 
 async function handle(event) {
     events.respond(event, {
