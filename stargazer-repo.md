@@ -74,9 +74,9 @@ async function handle() {
         return;
     }
     
-    let mmClient = new Mattermost(await store.get("mattermost:url"), token);
+    let mmClient = new Mattermost(url, token);
     console.log("Checking the stars");
-    for (let [key, currentCount] of (await store.queryPrefix("watch:")) || []) {
+    for (let [key, currentCount] of await store.queryPrefix("watch:")) {
         let [_, channelId, repo] = key.split(':');
         
         // Call Github API
