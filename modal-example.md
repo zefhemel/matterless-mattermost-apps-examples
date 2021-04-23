@@ -1,5 +1,15 @@
+# Basic "Hello world" modal
+Ported from [quickstart guide](https://developers.mattermost.com/integrate/apps/quick-start-go/).
+
 # To run
 
+To run with Matterless:
+
+```bash
+$ mls run modal-example.md
+```
+
+Install in Mattermost:
 ```
 /apps debug-add-manifest --url http://localhost:8222/modal-example/manifest.json
 /apps install --app-id matterless-modal-example
